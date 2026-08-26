@@ -2,17 +2,22 @@
 
 ## 👥 Tutora: 
 - Sofia Raia
-- 
+  
 ## 👥 Equipo 188
 - Laura Diaco  
 - Matias Mansilla
-- 
 
 ---
 
+# 📘 Consorcio360
+
+<p align="center">
+  <img src="assets/Consorcio360-laappdetuedificio.jpg" alt="Logo Consorcio360" width="200"/>
+</p>
+
 ## 📖 Introducción
 
-Como grupo hemos decidido desarrollar una aplicación web para la **gestión integral de consorcios**. La idea surge de observar las dificultades que enfrentan tanto administradores como vecinos en la organización de gastos, mantenimientos y comunicación interna. Nuestro objetivo es ofrecer una herramienta moderna que centralice toda esta información y que, al mismo tiempo, promueva la transparencia y la participación vecinal.  
+Como grupo hemos decidido desarrollar una aplicación web para la **gestión integral de consorcios** que se llamará Consorcio360. La idea surge de observar las dificultades que enfrentan tanto administradores como vecinos en la organización de gastos, mantenimientos y comunicación interna. Nuestro objetivo es ofrecer una herramienta moderna que centralice toda esta información y que, al mismo tiempo, promueva la transparencia y la participación vecinal.  
 
 El administrador contará con un acceso que le permitirá registrar gastos, facturas y pagos, además de llevar un historial de mantenimientos y programar revisiones importantes (ascensores, tanque de agua, etc.). Los vecinos, por su parte, tendrán su propio acceso para consultar su estado administrativo, visualizar el historial de mantenimiento del edificio y participar en reuniones virtuales, con posibilidad de leer actas y votar decisiones simples.  
 
@@ -60,6 +65,8 @@ De esta manera, buscamos que la aplicación no solo organice mejor la administra
 ### Semana 9: Deploy y documentación
 - Publicación de la aplicación en **Railway** o **Render**.  
 - Documentación del sistema y entrega final en el repositorio de **GitHub**.
+
+---
 
 ## Conclusión
 Este plan de trabajo nos permitirá avanzar de manera ordenada, integrando tecnologías modernas pero accesibles para estudiantes. La aplicación busca resolver un problema real y cotidiano, mostrando en el proceso nuestro dominio de herramientas de backend, frontend, bases de datos y servicios complementarios.
