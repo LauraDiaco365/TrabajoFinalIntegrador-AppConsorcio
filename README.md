@@ -11,6 +11,10 @@
 
 # 🏢 Consorcio360
 
+<p align="center">
+  <img src="assets/Consorcio360-laappdetuedificio.jpg" alt="Logo Consorcio360" width="200"/>
+</p>
+
 ## 📋 Introducción
 
 Como grupo decidimos desarrollar **Consorcio360**, una aplicación web para la **gestión integral de consorcios**, pensada para centralizar en un único lugar la administración económica, el seguimiento de mantenimientos y la comunicación entre administradores y vecinos.
