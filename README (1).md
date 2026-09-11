@@ -1,7 +1,9 @@
-# 📘 Proyecto: Aplicación de Gestión de Consorcios
-👥 Tutora:
+#  📘 Proyecto: Aplicación de Gestión de Consorcios
+
+## 👥 Tutora:
 Sofia Raia
-👥 Equipo 188
+
+## 👥 Equipo 188
 Laura Diaco
 Matias Mansilla
 
