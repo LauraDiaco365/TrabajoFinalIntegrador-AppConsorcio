@@ -1,3 +1,10 @@
+# 📘 Proyecto: Aplicación de Gestión de Consorcios
+##👥 Tutora:
+Sofia Raia
+##👥 Equipo 188
+Laura Diaco
+Matias Mansilla
+
 # 🏢 Consorcio360
 
 Plataforma web para la **gestión integral de consorcios**: centraliza la administración económica, el seguimiento de mantenimientos y la comunicación entre administradores y vecinos.
