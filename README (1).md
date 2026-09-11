@@ -233,8 +233,8 @@ Requisitos: Git, Python 3.12 y Docker Desktop instalados.
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/TU_USUARIO/consorcio360.git
-cd consorcio360
+git clone https://github.com/LauraDiaco365/TrabajoFinalIntegrador-AppConsorcio.git
+
 
 # 2. Crear y activar el entorno virtual
 python -m venv venv
