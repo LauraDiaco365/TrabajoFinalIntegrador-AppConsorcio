@@ -5,60 +5,69 @@ Este documento contiene la representación visual y formal del Modelo Entidad-Re
 ```mermaid
 erDiagram
     %% App usuarios
-    USUARIO {
+   USUARIO {
         bigint id PK
-        string username
-        string email
-        string password
-        string rol "ADMINISTRADOR | VECINO"
+        string username UK
+        string email UK
         string first_name
         string last_name
-        string telefono
+        string password
+        string rol "administrador / vecino"
+        string telefono "nullable"
         boolean is_active
+        boolean is_staff
+        boolean is_superuser
         datetime date_joined
+        datetime last_login "nullable"
     }
 
     %% App consorcios
-    CONSORCIO {
+   CONSORCIO {
         bigint id PK
         string nombre
         string direccion
         string cuit
+        bigint administrador_id FK "nullable"
     }
 
     UNIDAD {
         bigint id PK
         bigint consorcio_id FK
-        bigint usuario_id FK
+        bigint propietario_id FK "nullable"
         string piso
         string departamento
         decimal porcentaje_fiscal
     }
 
     %% App economia
-    GASTO {
+   GASTO {
         bigint id PK
         bigint consorcio_id FK
-        string concepto
+        bigint liquidacion_id FK "nullable"
+        string descripcion
         decimal monto
         date fecha
+        string tipo "ordinario / extraordinario"
     }
 
-    LIQUIDACION {
+  LIQUIDACION {
         bigint id PK
         bigint consorcio_id FK
         int mes
         int anio
         decimal monto_total
+        string estado "abierta / cerrada"
     }
 
     PAGO {
         bigint id PK
         bigint unidad_id FK
         bigint liquidacion_id FK
+        bigint registrado_por FK "nullable"
         decimal monto
-        datetime fecha_pago
-        string comprobante
+        date fecha_pago
+        string comprobante "nullable"
+        string estado "pendiente / confirmado"
     }
 
     %% App mantenimientos (Diseñado / Pausado)
@@ -67,25 +76,35 @@ erDiagram
         bigint consorcio_id FK
         string titulo
         string descripcion
-        string estado "PENDIENTE | EN_PROCESO | FINALIZADO"
-        datetime fecha_creacion
+        decimal monto "nullable"
+        date fecha_solicitud
+        date fecha_inicio "nullable"
+        date fecha_fin "nullable"
+        string estado "pendiente / en_proceso / finalizado"
+        text observaciones "nullable"
     }
 
     %% App reunions (Diseñado / Pausado)
     REUNION {
         bigint id PK
         bigint consorcio_id FK
+        string titulo
+        text temario
         datetime fecha_hora
-        string orden_del_dia
-        string canal_enlace
+        string lugar_o_enlace "nullable"
+        string estado "pendiente / finalizada / cancelada"
     }
 
     %% Relaciones
+    USUARIO ||--o{ CONSORCIO : "administra"
     USUARIO ||--o{ UNIDAD : "posee / habita"
+    USUARIO ||--o{ PAGO : "registra"
     CONSORCIO ||--|{ UNIDAD : "contiene"
     CONSORCIO ||--o{ GASTO : "registra"
     CONSORCIO ||--o{ LIQUIDACION : "genera"
-    CONSORCIO ||--o{ MANTENIMIENTO : "requiere"
+    CONSORCIO ||--o{ MANTENIMIENTO : "registra"
     CONSORCIO ||--o{ REUNION : "convoca"
     UNIDAD ||--o{ PAGO : "realiza"
     LIQUIDACION ||--o{ PAGO : "recibe"
+    LIQUIDACION ||--o{ GASTO : "incluye"
+    ```

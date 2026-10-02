@@ -20,3 +20,4 @@ Se ha seleccionado una **arquitectura desacoplada basada en cliente-servidor con
 - **Backend (API REST):** Desarrollado en **Python 3.12** y **Django REST Framework (DRF)**, utilizando autenticación basada en **JWT (JSON Web Tokens)**. La lógica del backend opera mediante controladores de vistas y serializadores para exponer endpoints limpios y seguros.
 - **Frontend (SPA):** Desarrollado con **React 18** y **Vite**, gestionando la interfaz del Administrador y del Vecino mediante consumo de la API REST.
 - **Base de Datos Relacional:** **PostgreSQL 16** para garantizar la integridad referencial de los datos y el soporte de transacciones para el área económica.
+```

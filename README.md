@@ -46,7 +46,7 @@ Para garantizar la claridad del proyecto y responder punto por punto a las devol
 
 ### Frontend
 - **React 18** — interfaz de usuario (SPA).
-- **Vite** — servidor de desarrollo y build del frontend.
+- **Vite (Node.js / npm)** — servidor de desarrollo y build del frontend.
 - **CSS tradicional** — estilos propios, sin frameworks, para mantener el desarrollo simple y transparente.
 
 ### Base de datos
@@ -63,119 +63,90 @@ Para garantizar la claridad del proyecto y responder punto por punto a las devol
 > **Criterio de selección:** se priorizó un stack conocido, maduro y de bajo "costo de configuración". Django entrega de fábrica autenticación segura, ORM y panel de administración, lo que permite dedicar el tiempo del proyecto a la lógica de negocio del dominio (prorrateo, liquidaciones, pagos) en lugar de a infraestructura.
 
 ---
+## Documentación del Proyecto
+
+* 📄 **[Requerimientos Funcionales y no funcionales, matriz de permisos por rol y flujos de procesos principales](docs/requerimientos_funcionales.md)**
+* 📐 **[Diagrama ER y Modelo Relacional](docs/diagrama_er.md)**
+* 🗄️ **[Script SQL de la Base de Datos](database/schema.sql)**
+* 📝 **[Registro de Cambios y Decisiones de Diseño](decisiones_de_diseno.md)**
+* 📝 **[Diseño de API REST para el backend](api.md)**
+- 📄 **[Reglas de Negocio Detalladas](./docs/reglas_de_negocio.md)**
+
+---
+
 ## 📁 Estructura del Repositorio
 
-El proyecto mantiene una organización clara dividiendo la documentación, la base de datos, el backend y el frontend:
+El proyecto mantiene una organización modular dividiendo la documentación técnica, los scripts relacionales de la base de datos, el backend con Django y la interfaz de usuario con React:
 
 ```text
 TrabajoFinalIntegrador-AppConsorcio/
-├── assets/                           # Imágenes y recursos estáticos del proyecto (logos, etc.)
-├── backend/                          # Aplicaciones de Django (usuarios, consorcios, economia, mantenimientos, reunions)
-├── config/                           # Configuración global del proyecto Django (settings, urls, wsgi)
-├── database/                         # Scripts DDL/DML y esquemas de la base de datos
-├── docs/                             # Documentación técnica del proyecto
-│   ├── decisiones_de_diseno.md       # Decisiones de arquitectura, changelog y reglas de negocio
-│   └── historial/                    # Registro histórico
+├── assets/                            # Recursos estáticos (logos, capturas de pantalla, esquemas)
+├── backend/                           # Proyecto Backend Django
+│   ├── config/                        # Configuración global de Django (settings.py, urls.py, wsgi.py)
+│   ├── consorcios/                    # App: Gestión de consorcios y catastro de unidades
+│   ├── economia/                      # App: Gastos, liquidaciones, expensas y pagos
+│   ├── mantenimientos/                # App: Seguimiento de obras y reparaciones edilicias
+│   ├── reunions/                      # App: Convocatorias a asambleas y resúmenes/actas
+│   ├── usuarios/                      # App: Autenticación, perfiles y roles (RBAC)
+│   └── manage.py                      # Script ejecutable de Django (ubicado en la raíz de backend)
+├── database/                          # Definición física de la base de datos PostgreSQL
+│   └── schema.sql                     # Script DDL/DML con tablas, constraints y claves foráneas
+├── docs/                              # Documentación técnica y académica del proyecto
+│   ├── requerimientos_funcionales.md  # RF, RNF, Matriz RBAC y Casos de Uso (CU-00 a CU-04)
+│   ├── reglas_de_negocio.md           # Invariantes (100% fiscal), fórmulas de prorrateo y restricciones
+│   ├── api.md                         # Especificación de la API REST (Endpoints, JSONs, JWT)
+│   ├── decisiones_de_diseno.md        # Justificaciones arquitectónicas, changelog y notas de cátedra
+│   ├── diagrama_er.md                 # Diagrama Entidad-Relación y diccionario de datos
+│   └── historial/                     # Registro histórico de versiones previas
 │       └── README_anterior.md
-├── frontend/                         # Proyecto React (Interfaz de usuario)
-├── .gitignore                        # Archivos excluidos del versionado de Git
-├── docker-compose.yml                # Configuración de contenedor PostgreSQL
-├── README.md                         # Documentación principal del repositorio
-└── requirements.txt                  # Dependencias del proyecto Python
+├── frontend/                          # Proyecto React + Vite (Interfaz de usuario)
+├── .gitignore                         # Archivos excluidos del versionado (venv, db.sqlite3, .env)
+├── README.md                          # Documentación principal y portal del repositorio
+└── requirements.txt                   # Dependencias de Python para el backend
 
+/* Archivos locales de desarrollo (excluidos por .gitignore): */
+├── venv/                              # Entorno virtual local de Python (no se sube a Git)
+└── db.sqlite3                         # Base de datos SQLite local para pruebas rápidas (no se sube a Git)
+```
+> **Nota sobre la simplificación de infraestructura:**  
+> A partir de las observaciones de la cátedra para prevenir la sobre-ingeniería (*scope creep*), **se eliminó la configuración de `docker-compose.yml`**. El entorno de desarrollo opera de forma nativa con entornos virtuales de Python (`venv`) y PostgreSQL local, mientras que el despliegue en producción se realiza mediante la plataforma PaaS **Render**, que aprovisiona el runtime de Python y PostgreSQL de manera directa.
 ---
 
 ## 🗄️ Diseño de la base de datos
 
-Base relacional en PostgreSQL. Un único modelo de **Usuario** con campo `rol` (administrador/vecino), lo que evita duplicar nombre, email y contraseña en dos tablas (normalización) y simplifica la autenticación.
+Para evitar inconsistencias y mantener una única fuente de verdad en el proyecto, el diseño completo de la base de datos se encuentra centralizado y documentado en:
 
-```mermaid
-erDiagram
-    USUARIO ||--o{ CONSORCIO : "administra"
-    CONSORCIO ||--o{ UNIDAD : "contiene"
-    USUARIO ||--o{ UNIDAD : "es propietario de"
-    CONSORCIO ||--o{ GASTO : "registra"
-    CONSORCIO ||--o{ LIQUIDACION : "genera"
-    LIQUIDACION ||--o{ PAGO : "recibe"
-    UNIDAD ||--o{ PAGO : "abona"
-    CONSORCIO ||--o{ MANTENIMIENTO : "gestiona"
-    CONSORCIO ||--o{ REUNION : "convoca"
+👉 **[Ver Diagrama ER y Especificación Oficial de la Base de Datos](docs/diagrama_er.md)**
 
-    USUARIO {
-        int id PK
-        string username
-        string email
-        string password "hash"
-        string rol "administrador | vecino"
-    }
-    CONSORCIO {
-        int id PK
-        int administrador_id FK
-        string nombre
-        string direccion
-        string cuit
-    }
-    UNIDAD {
-        int id PK
-        int consorcio_id FK
-        int propietario_id FK
-        string numero "ej: 3B"
-        string piso
-        decimal porcentaje_fiscal "0 a 100"
-    }
-    GASTO {
-        int id PK
-        int consorcio_id FK
-        string descripcion
-        decimal monto
-        date fecha
-        string tipo "ordinario | extraordinario"
-    }
-    LIQUIDACION {
-        int id PK
-        int consorcio_id FK
-        int mes "1-12"
-        int anio
-        string estado "abierta | cerrada"
-    }
-    PAGO {
-        int id PK
-        int liquidacion_id FK
-        int unidad_id FK
-        decimal monto
-        date fecha
-        string estado "pendiente | confirmado"
-    }
-    MANTENIMIENTO {
-        int id PK
-        int consorcio_id FK
-        string titulo
-        string descripcion
-        string observaciones
-        string estado "pendiente | en_proceso | finalizado"
-        date fecha_inicio
-        date fecha_fin
-    }
-    REUNION {
-        int id PK
-        int consorcio_id FK
-        string titulo
-        datetime fecha_hora
-        string lugar_o_enlace
-        string temario
-        string estado "programada | realizada | cancelada"
-    }
-```
+### Resumen de Entidades Principales
 
-### Reglas de Negocio Modeladas
+* **Usuario (`usuarios_usuario`):** Cuentas de usuarios del sistema con roles definidos (`administrador`, `vecino`, etc.).
+* **Consorcio (`consorcios_consorcio`):** Datos del consorcio/edificio. Vinculado a su Administrador responsable (`administrador_id`).
+* **Unidad (`consorcios_unidad`):** Departamentos o unidades funcionales. Identificadas por `piso` y `departamento` (`UNIQUE (consorcio_id, piso, departamento)`) y vinculadas a su `propietario_id`.
+* **Gasto (`economia_gasto`):** Gastos registrados por el consorcio, clasificados por tipo (`ordinario`/`extraordinario`).
+* **Liquidación (`economia_liquidacion`):** Periodos de liquidación de expensas (mes/año) con estado (`abierta`/`cerrada`) El monto total se calcula dinámicamente durante el periodo abierto y se congela al momento del cierre para preservar los saldos históricos.
+* **Pago (`economia_pago`):** Registro de pagos efectuados por las unidades, con estado de confirmación (`pendiente`/`confirmado`).
+* **Mantenimiento (`mantenimiento_mantenimiento`):** Novedades, reclamos o trabajos de mantenimiento con sus fechas y observaciones.
+* **Reunión (`reuniones_reunion`):** Asambleas o reuniones de consorcio con su temario, enlace/lugar y estado.
 
-* **Consorcio y Unidades:** Un **Administrador** gestiona uno o varios consorcios. Cada consorcio agrupa sus respectivas unidades habitacionales, las cuales tienen asignado un vecino propietario y un porcentaje fiscal.
-* **Gestión Económica:** El **Administrador** registra los gastos ordinarios y extraordinarios del consorcio y genera las liquidaciones mensuales.
-* **Restricción de Unicidad (`unique_together`):** No se pueden generar dos liquidaciones para el mismo consorcio en el mismo mes y año.
-* **Cálculo de Prorrateo:** Se calcula dinámicamente (`monto_unidad = total_gastos × porcentaje_fiscal / 100`). No se guarda en la base de datos para asegurar que los saldos siempre estén actualizados si se modifica o agrega un gasto.
-* **Pagos Simulados:** El **Vecino** registra el pago de su liquidación, el cual nace en estado `pendiente` hasta que el **Administrador** lo revisa y confirma.
-* **Mantenimientos:** El **Administrador** registra los trabajos edilicios o reparaciones del consorcio, actualizando sus observaciones y el semáforo de seguimiento (`pendiente`, `en_proceso`, `finalizado`) para dar visibilidad a los vecinos.
-* **Reuniones:** El **Administrador** crea y convoca las reuniones o asambleas del consorcio, estableciendo fecha, hora, lugar o enlace de acceso y el temario con los puntos a tratar.
+## 📋 Reglas de Negocio Principales
+
+- **Consorcio y Unidades:** Un Administrador gestiona uno o más consorcios. Cada consorcio agrupa sus unidades funcionales (departamentos, cocheras, locales), las cuales se vinculan a un vecino propietario.
+  - **Invariante Fiscal (100%):** La suma acumulada del `porcentaje_fiscal` de todas las unidades debe dar exactamente **100.00%**. El backend exige este balance para permitir el cierre de liquidaciones.
+  - **Unicidad Territorial:** Se restringe por BD la duplicación de `(consorcio_id, piso, departamento)`.
+  - **Multi-unidad y Selección Propiedad Activa:** Un vecino puede poseer varias unidades (incluso en diferentes consorcios) y selecciona en sesión sobre cuál operar.
+
+- **Gestión Económica y Liquidaciones:**
+  - **Restricción de Liquidación Única:** Restricción por BD de `UNIQUE (consorcio_id, mes, año)`.
+  - **Cierre e Inmutabilidad:** Al pasar a estado `CERRADA`, el `monto_total` y los gastos cargados se congelan para garantizar la inmutabilidad histórica del cálculo de expensas.
+
+- **Pagos y Saldos:**
+  - **Flujo de Aprobación:** Los pagos registrados nacen en estado `PENDIENTE` y requieren verificación del Administrador para cambiar a `CONFIRMADO`.
+  - **Pagos Parciales:** La relación 1:N entre liquidación/unidad y pagos admite entregas en cuotas, calculando el saldo pendiente dinámicamente: $\text{Monto Expensa} - \sum \text{Pagos Confirmados}$.
+
+- **Mantenimiento y Asambleas:**
+  - **Seguimiento Read-Only:** El vecino consulta el avance de obras y reparaciones en modo solo lectura.
+  - **Convocatoria y Resumen de Asambleas:** El Administrador gestiona el ciclo de vida de las reuniones (`PENDIENTE`, `FINALIZADA`, `CANCELADA`) y publica la síntesis o acta de lo tratado al concluir.
 
 ---
 
@@ -186,8 +157,8 @@ erDiagram
 | `usuarios` | Login, registro y gestión de roles (Administrador / Vecino) | Diseñado / Código inicial validado |
 | `consorcios` | Alta de consorcios, registro de unidades y porcentaje fiscal | Diseñado / Código inicial validado |
 | `economia` | Gastos, liquidaciones mensuales, cálculo de prorrateo y pagos simulados | Diseñado / Código inicial validado |
-| `mantenimientos` | Registro de tareas edilicias, observaciones y semáforo de seguimiento | Diseñado (Pausado de codificación)[cite: 1] |
-| `reunions` | Convocatoria a reuniones de consorcio, asignación de temario y canal | Diseñado (Pausado de codificación)[cite: 1] |
+| `mantenimientos` | Registro de tareas edilicias, observaciones y semáforo de seguimiento | Diseñado (Pausado de codificación) |
+| `reunions` | Convocatoria a reuniones de consorcio, asignación de temario y canal | Diseñado (Pausado de codificación) |
 
 ---
 
@@ -220,33 +191,49 @@ Las siguientes funcionalidades quedan identificadas como evolución de la plataf
 
 > ⚠️ **Nota sobre el alcance de desarrollo:** Siguiendo las indicaciones de las entregas académicas, el código existente en el repositorio se utilizó únicamente como una **prueba de concepto para validar la viabilidad del diseño de datos** (especialmente el cálculo dinámico del prorrateo). El desarrollo formal de nuevos endpoints, la codificación de las apps `mantenimientos` y `reunions`, y el frontend en React se encuentran en pausa hasta la validación de esta documentación.
 
-### ▶️ Instrucciones para levantar el entorno de validación
+### 🚀 Guía de Instalación y Ejecución Local
 
-Requisitos: Python 3.12 y Git. (Opcional: Docker Desktop para PostgreSQL).
+#### Prerrequisitos
+- **Python 3.12+**
+- **Node.js 18+** y **npm** (requeridos para el motor de ejecución de React y Vite).
+- **PostgreSQL 16** corriendo en local (puerto `5432`) con la base de datos `consorcio_db` creada.
+
+---
 
 ```bash
-# 1. Clonar
-https://github.com/LauraDiaco365/TrabajoFinalIntegrador-AppConsorcio.git
-cd consorcio360
+# 1. Clonar el repositorio y acceder al proyecto
+git clone [https://github.com/LauraDiaco365/TrabajoFinalIntegrador-AppConsorcio.git](https://github.com/LauraDiaco365/TrabajoFinalIntegrador-AppConsorcio.git)
+cd TrabajoFinalIntegrador-AppConsorcio
 
-# 2. Entorno virtual
+# 2. Configurar e iniciar el Backend (Django + PostgreSQL)
+cd backend
+
+# Crear y activar el entorno virtual
 python -m venv venv
-venv\Scripts\activate          # Windows
-# source venv/bin/activate     # Linux/Mac
+venv\Scripts\activate          # En Windows
+# source venv/bin/activate     # En Linux/Mac
 
-# 3. Dependencias
+# Instalar dependencias de Python (Django 5, DRF, SimpleJWT, Pytest, psycopg)
 pip install -r requirements.txt
 
-# 4. Base de datos (opción A: con Docker)
-docker compose up -d
-# (opción B: sin Docker, usar SQLite -> ver nota en settings.py)
+# Crear el archivo .env a partir de la plantilla
+cp .env.example .env     # En Linux/Mac
+# copy .env.example .env # En Windows (CMD/PowerShell)
 
-# 5. Crear tablas y superusuario
+# Aplicar migraciones en PostgreSQL local y crear el superusuario administrador
 python manage.py migrate
 python manage.py createsuperuser
 
-# 6. Levantar servidor
+# (Opcional) Ejecutar la suite de pruebas unitarias. Verifica que las reglas de negocio (prorrateo 100%, inmutabilidad, RBAC) pasen correctamente
+pytest
+
+# Levantar el servidor de desarrollo de la API REST (http://localhost:8000)
 python manage.py runserver
+
+# 3. Configurar e iniciar el Frontend (React 18 + Vite) — En otra terminal. El cliente Web quedará disponible en http://localhost:5173/
+cd ../frontend
+npm install
+npm run dev
 ```
 
 ## Demo en el panel de administración
@@ -259,28 +246,29 @@ Después de levantar el servidor (`python manage.py runserver`), entrar a:
 1. Iniciar sesión con el superusuario creado.
 2. Crear **usuario vecino** de prueba
 3. Cargar un **Consorcio** de prueba 
-3. Agregar **2 Unidades** dentro de ese consorcio creado con porcentajes fiscales que sumen 100% (las unidades pueden estar asignadas al mismo vecino de prueba)
-4. Registrar **1 Gasto** (ejemplo: Luz $10.000).
+3. Agregar **2 Unidades** dentro de ese consorcio creado con porcentajes fiscales que sumen 100%, por ejemplo, 50% y 50% (las unidades pueden estar asignadas al mismo vecino de prueba)
+4. Registrar **1 Gasto** (ejemplo: Luz $10.000) de tipo `ordinario`.
 5. Crear la **Liquidación** del mes correspondiente.
 
 ### Resultado esperado
-En el listado de liquidaciones se muestran:
-- El **monto_total** calculado automáticamente (ejemplo: $10.000).
-- El **prorrateo por unidad**, donde cada unidad aparece con el monto que le corresponde (ejemplo: `1A: 5000.00, 1B: 5000.00`).
+En el panel de administración y detalle de la liquidación:
+- Mientras la liquidación está `abierta`, el importe por unidad se calcula dinámicamente según el porcentaje fiscal (ejemplo: `1A: $5.000,00`, `1B: $5.000,00`).
+- Al pasar la liquidación a estado `cerrada`, el **monto_total** ($10.000,00) y los gastos quedan congelados en la base de datos, asegurando la inmutabilidad de los saldos históricos.
 
-Esto confirma que el cálculo de prorrateo funciona correctamente tanto en los tests como en la interfaz del admin.
+Esto confirma que la lógica de prorrateo y la regla de cierre funcionan correctamente tanto en los tests como en la interfaz del admin.
 
 
 ## 🧪 Tests de la app *economia*
 
 El archivo `tests.py` de la app **economia** comprueba que el cálculo del prorrateo funciona correctamente.  
-Ejemplo: un gasto de $10.000 se reparte 50/50 entre dos unidades, resultando $5.000 para cada una.
+Ejemplo: un gasto de $10.000 se reparte 50/50 entre dos unidades, resultando $5.000 para cada una y validando la restricción del 100% en porcentajes fiscales.
 
 ### Cómo ejecutarlo
 Desde la carpeta donde está `manage.py`:
 
 ```bash
 python manage.py test economia
+```
 
 
 ## 📌 Estado actual
