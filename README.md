@@ -34,6 +34,14 @@ Para garantizar la claridad del proyecto y responder punto por punto a las devol
 * **Inclusión de los Módulos (`mantenimientos` y `reunions`):** En respuesta al señalamiento sobre las apps que ya estaban creadas en el repositorio, confirmamos que **ambas se mantienen dentro del alcance del proyecto**. En esta entrega sumamos sus entidades y reglas de negocio al diseño conceptual y al Diagrama ER, pausando el desarrollo de código hasta que la documentación técnica esté aprobada.
 * **Higiene del Repositorio (`.gitignore`):** Agregamos un archivo `.gitignore` para proyectos Django y React, y quitamos del seguimiento de Git la carpeta del entorno virtual (`venv/`), los archivos de base de datos local (`*.sqlite3`) y las carpetas de caché (`__pycache__/`).
 * **Respeto al Proceso de Diseño:** Tomamos en cuenta la indicación de validar el diseño antes de programar, por lo que no avanzaremos con nueva lógica en código (backend o frontend) hasta contar con la aprobación formal de esta entrega.
+### 📩 Ajustes de la 2.ª Entrega (Revision)
+Se completó una refactorización y saneamiento integral del repositorio para cumplir al 100% con las observaciones del equipo docente:
+
+- **Modelo de Datos Unificado:** Se estableció `docs/diagrama_er.md` como la única fuente oficial de verdad del modelo ER. Se alinearon completamente los atributos, restricciones y tipos de datos entre la documentación, el script DDL (`database/schema.sql`) y los modelos ORM de Django.
+- **Documentación Arquitectónica y API:** Se incorporó en `docs/modulos_y_arquitectura.md` el listado numerado de requerimientos (`RF`/`RNF`), la matriz de permisos por rol (RBAC), los diagramas de flujos/casos de uso clave y el diseño de la API REST.
+- **Reglas de Negocio Consolidadas:** Se formalizaron los criterios de negocio clave, incluyendo el control de coeficientes del 100% por consorcio, el congelamiento de liquidaciones al cambiar a estado cerrada, la política de pagos y la visibilidad por consorcio.
+- **Seguridad e Infraestructura:** Se eliminó la exposición de credenciales mediante `python-decouple` y la plantilla `backend/.env.example`. Se simplificó la pila de servicios y se agregaron las dependencias de testing (`pytest`, `pytest-django`).
+- **Estructura y Limpieza del Repositorio:** Se reestructuró la carpeta `backend/` asegurando la ejecución nativa de `python manage.py`, se corrigieron bloques de formato en el README y se purged del historial de Git todo archivo temporal, caché o entorno local (`venv/`, `node_modules/`, `__pycache__/`, `db.sqlite3`).
 
 ---
 ## 🛠️ Stack tecnológico
