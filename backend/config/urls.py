@@ -6,6 +6,8 @@ from rest_framework.routers import DefaultRouter
 from consorcios.views import ConsorcioViewSet, UnidadViewSet
 from economia.views import GastoViewSet, LiquidacionViewSet, PagoViewSet
 from usuarios.views import UsuarioViewSet
+from mantenimientos.views import MantenimientoViewSet
+from reunions.views import ReunionViewSet
 
 # 2. Creamos un ÚNICO enrutador para toda la API
 router = DefaultRouter()
@@ -17,7 +19,8 @@ router.register(r'gastos', GastoViewSet)
 router.register(r'liquidaciones', LiquidacionViewSet)
 router.register(r'pagos', PagoViewSet)
 router.register(r'usuarios', UsuarioViewSet)
-
+router.register(r'mantenimientos', MantenimientoViewSet)
+router.register(r'reuniones', ReunionViewSet)
 
 # 4. Definimos las URLs finales
 urlpatterns = [
