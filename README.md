@@ -43,6 +43,18 @@ Se completó una refactorización y saneamiento integral del repositorio para cu
 - **Seguridad e Infraestructura:** Se eliminó la exposición de credenciales mediante `python-decouple` y la plantilla `backend/.env.example`. Se simplificó la pila de servicios y se agregaron las dependencias de testing (`pytest`, `pytest-django`).
 - **Estructura y Limpieza del Repositorio:** Se reestructuró la carpeta `backend/` asegurando la ejecución nativa de `python manage.py`, se corrigieron bloques de formato en el README y se purged del historial de Git todo archivo temporal, caché o entorno local (`venv/`, `node_modules/`, `__pycache__/`, `db.sqlite3`).
 
+## Avances de la 2.ª Entrega: API REST y Modelos Completos
+
+Se construyó la arquitectura base de la API y se completaron los modelos del siqstema siguiendo el diagrama de entidad-relación (Mermaid):
+
+* **Enrutador Centralizado:** Se implementó `DefaultRouter` de Django REST Framework en `config/urls.py` para manejar todas las rutas de la API desde un solo lugar, eliminando archivos `urls.py` redundantes.
+* **Módulos Core Expuestos:** Se crearon `ModelSerializers` y `ModelViewSets` para:
+  * `Consorcios` y `Unidades`.
+  * `Economía`: Gastos, Pagos y Liquidaciones (exponiendo la propiedad calculada `monto_total`).
+  * `Usuarios`: Exponiendo datos de forma segura sin revelar contraseñas (`AbstractUser`).
+* **Nuevos Modelos:** Se crearon las tablas de base de datos para `Mantenimiento` (Tickets de reclamos) y `Reunión` (Asambleas), definiendo sus campos, relaciones (`ForeignKey` a Consorcio) y opciones de estado.
+* **Panel de Administración:** Se estandarizó el registro de todos los modelos (`@admin.register`) para habilitar su gestión desde `/admin/`.
+
 ---
 ## 🛠️ Stack tecnológico
 
